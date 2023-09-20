@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetDataProvider.Web", "BetDataProvider.Web\BetDataProvider.Web.csproj", "{B25B36AC-3271-4691-942C-CB009BCBB582}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B25B36AC-3271-4691-942C-CB009BCBB582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B25B36AC-3271-4691-942C-CB009BCBB582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B25B36AC-3271-4691-942C-CB009BCBB582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B25B36AC-3271-4691-942C-CB009BCBB582}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6008BFF7-4AB3-4B53-8592-01F42231ED81}
+	EndGlobalSection
+EndGlobal
