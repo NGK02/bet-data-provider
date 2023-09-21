@@ -13,10 +13,13 @@ namespace BetDataProvider.DataAccess.Models
         [Key]
         public int Id { get; set; }
 
+        //[Required]
+        [XmlAttribute(AttributeName = "Id")]
+        public int XmlId { get; set; }
+
         [XmlAttribute(AttributeName = "Name")]
         public string Name { get; set; }
 
-        [Required]
         public DateTime CreatedOn { get; set; }
 
         public bool IsDeleted { get; set; }

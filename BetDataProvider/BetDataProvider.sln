@@ -4,10 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetDataProvider.Web", "BetDataProvider.Web\BetDataProvider.Web.csproj", "{B25B36AC-3271-4691-942C-CB009BCBB582}"
+	ProjectSection(ProjectDependencies) = postProject
+		{17AAE618-3207-4CCF-8EC8-A4D5B7932CE9} = {17AAE618-3207-4CCF-8EC8-A4D5B7932CE9}
+		{4D2D5004-8A12-46A2-98D4-0237F48A3686} = {4D2D5004-8A12-46A2-98D4-0237F48A3686}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetDataProvider.DataAccess", "BetDataProvider.DataAccess\BetDataProvider.DataAccess.csproj", "{17AAE618-3207-4CCF-8EC8-A4D5B7932CE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetDataProvider.DataAccess", "BetDataProvider.DataAccess\BetDataProvider.DataAccess.csproj", "{17AAE618-3207-4CCF-8EC8-A4D5B7932CE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetDataProvider.Business", "BetDataProvider.Business\BetDataProvider.Business.csproj", "{4D2D5004-8A12-46A2-98D4-0237F48A3686}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetDataProvider.Business", "BetDataProvider.Business\BetDataProvider.Business.csproj", "{4D2D5004-8A12-46A2-98D4-0237F48A3686}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
