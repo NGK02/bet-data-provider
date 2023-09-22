@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace BetDataProvider.DataAccess.Models.Enums
 {
-    public enum MatchType
+    public enum MatchTypeEnum
     {
-        Prematch = 1,
+        PreMatch = 1,
         Live = 2,
-        Outright = 3
+        OutRight = 3
     }
 }

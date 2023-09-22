@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BetDataProvider.DataAccess.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,11 @@ namespace BetDataProvider.DataAccess.Models
     [XmlRoot(ElementName = "Match")]
     public class Match : Entity
     {
-        public string Name { get; set; }
-
         [XmlAttribute(AttributeName = "StartDate")]
         public DateTime StartDate { get; set; }
 
         [XmlAttribute(AttributeName = "MatchType")]
-        public MatchType MatchType { get; set; }
+        public MatchTypeEnum MatchType { get; set; }
 
         [XmlElement(ElementName = "Bet")]
         public List<Bet> Bets { get; set; } = new List<Bet>();

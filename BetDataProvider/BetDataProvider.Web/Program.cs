@@ -3,9 +3,13 @@ using BetDataProvider.Business.Services.Contracts;
 using BetDataProvider.DataAccess;
 using BetDataProvider.DataAccess.Repositories;
 using BetDataProvider.DataAccess.Repositories.Contracts;
+using BetDataProvider.Web.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder();
+
+builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<BetDataDbContext>(options =>
 {
@@ -15,7 +19,22 @@ builder.Services.AddDbContext<BetDataDbContext>(options =>
 builder.Services.AddScoped<ISportRepository, SportRepository>();
 
 builder.Services.AddScoped<ISportService, SportService>();
+builder.Services.AddScoped<IXmlHandler, XmlHandler>();
+
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.MapControllers();
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

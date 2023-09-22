@@ -14,7 +14,7 @@ namespace BetDataProvider.DataAccess.Models
         public int Id { get; set; }
 
         //[Required]
-        [XmlAttribute(AttributeName = "Id")]
+        [XmlAttribute(AttributeName = "ID")]
         public int XmlId { get; set; }
 
         [XmlAttribute(AttributeName = "Name")]

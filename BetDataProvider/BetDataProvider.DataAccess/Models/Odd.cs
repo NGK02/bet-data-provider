@@ -11,10 +11,10 @@ namespace BetDataProvider.DataAccess.Models
     public class Odd : Entity
     {
         [XmlAttribute(AttributeName = "Value")]
-        public double Value { get; set; }
+        public decimal Value { get; set; }
 
-        [XmlAttribute(AttributeName = "SpecialBetValue")]
-        public double? SpecialBetValue { get; set; }
+        //[XmlAttribute(AttributeName = "SpecialBetValue")]
+        public decimal? SpecialBetValue { get; set; }
 
         public int BetId { get; set; }
         public Bet Bet { get; set; }
