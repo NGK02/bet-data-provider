@@ -9,6 +9,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder();
 
 builder.Services.AddControllers();
+
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddHostedService<RecurringSportService>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<BetDataDbContext>(options =>
@@ -21,8 +26,7 @@ builder.Services.AddScoped<ISportRepository, SportRepository>();
 builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<IXmlHandler, XmlHandler>();
 
-builder.Services.AddSwaggerGen();
-
+// not working as expected
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 var app = builder.Build();

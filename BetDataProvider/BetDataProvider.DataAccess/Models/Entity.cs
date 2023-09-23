@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace BetDataProvider.DataAccess.Models
 {
-    public class Entity
+    public abstract class Entity
     {
         [Key]
         public int Id { get; set; }
@@ -17,10 +17,11 @@ namespace BetDataProvider.DataAccess.Models
         [XmlAttribute(AttributeName = "ID")]
         public int XmlId { get; set; }
 
+        //[Required]
         [XmlAttribute(AttributeName = "Name")]
         public string Name { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         public bool IsDeleted { get; set; }
 

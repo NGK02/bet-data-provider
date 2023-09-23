@@ -29,6 +29,8 @@ namespace BetDataProvider.DataAccess
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // configure enum to be written as string into db
         }
     }
 }

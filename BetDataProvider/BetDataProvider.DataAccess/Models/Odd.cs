@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,12 @@ namespace BetDataProvider.DataAccess.Models
     [XmlRoot(ElementName = "Odd")]
     public class Odd : Entity
     {
+        //[Required]
         [XmlAttribute(AttributeName = "Value")]
-        public decimal Value { get; set; }
+        public string Value { get; set; }
 
-        //[XmlAttribute(AttributeName = "SpecialBetValue")]
-        public decimal? SpecialBetValue { get; set; }
+        [XmlAttribute(AttributeName = "SpecialBetValue")]
+        public string SpecialBetValue { get; set; }
 
         public int BetId { get; set; }
         public Bet Bet { get; set; }

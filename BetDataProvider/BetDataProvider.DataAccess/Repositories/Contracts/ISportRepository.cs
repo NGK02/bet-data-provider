@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BetDataProvider.DataAccess.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 {
     public interface ISportRepository
     {
+        public bool SaveSportData(Sport sportData);
     }
 }

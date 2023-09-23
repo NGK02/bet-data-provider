@@ -7,10 +7,17 @@ namespace BetDataProvider.Web.Controllers
     [Route("api/sports")]
     public class SportController : ControllerBase
     {
+        private readonly IXmlHandler _xmlHandler;
+
+        public SportController(IXmlHandler xmlHandler) 
+        {
+            _xmlHandler = xmlHandler;
+        }
+
         [HttpGet("")]
         public IActionResult Get() 
         {
-            throw new NotImplementedException();
+            return Ok();
         }
     }
 }
