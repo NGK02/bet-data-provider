@@ -35,8 +35,9 @@ namespace BetDataProvider.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsLive = table.Column<bool>(type: "bit", nullable: false),
-                    CategoryID = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     SportId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -60,11 +61,12 @@ namespace BetDataProvider.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MatchType = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -88,6 +90,7 @@ namespace BetDataProvider.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsLive = table.Column<bool>(type: "bit", nullable: false),
                     MatchId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -111,9 +114,10 @@ namespace BetDataProvider.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<double>(type: "float", nullable: false),
-                    SpecialBetValue = table.Column<double>(type: "float", nullable: true),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpecialBetValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BetId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -137,9 +141,21 @@ namespace BetDataProvider.DataAccess.Migrations
                 column: "MatchId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bets_XmlId",
+                table: "Bets",
+                column: "XmlId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_SportId",
                 table: "Events",
                 column: "SportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_XmlId",
+                table: "Events",
+                column: "XmlId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Matches_EventId",
@@ -147,9 +163,27 @@ namespace BetDataProvider.DataAccess.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Matches_XmlId",
+                table: "Matches",
+                column: "XmlId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Odds_BetId",
                 table: "Odds",
                 column: "BetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Odds_XmlId",
+                table: "Odds",
+                column: "XmlId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sports_XmlId",
+                table: "Sports",
+                column: "XmlId",
+                unique: true);
         }
 
         /// <inheritdoc />

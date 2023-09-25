@@ -36,6 +36,9 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -56,6 +59,9 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.HasIndex("MatchId");
 
+                    b.HasIndex("XmlId")
+                        .IsUnique();
+
                     b.ToTable("Bets");
                 });
 
@@ -67,7 +73,7 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
@@ -75,6 +81,9 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -96,6 +105,9 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.HasIndex("SportId");
 
+                    b.HasIndex("XmlId")
+                        .IsUnique();
+
                     b.ToTable("Events");
                 });
 
@@ -115,6 +127,9 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -136,6 +151,9 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("XmlId")
+                        .IsUnique();
+
                     b.ToTable("Matches");
                 });
 
@@ -156,6 +174,9 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -163,11 +184,12 @@ namespace BetDataProvider.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("SpecialBetValue")
-                        .HasColumnType("float");
+                    b.Property<string>("SpecialBetValue")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Value")
-                        .HasColumnType("float");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("XmlId")
                         .HasColumnType("int");
@@ -175,6 +197,9 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BetId");
+
+                    b.HasIndex("XmlId")
+                        .IsUnique();
 
                     b.ToTable("Odds");
                 });
@@ -204,6 +229,9 @@ namespace BetDataProvider.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("XmlId")
+                        .IsUnique();
 
                     b.ToTable("Sports");
                 });

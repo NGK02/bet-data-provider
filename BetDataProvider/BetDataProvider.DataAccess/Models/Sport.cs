@@ -11,6 +11,6 @@ namespace BetDataProvider.DataAccess.Models
     public class Sport : Entity
     {
         [XmlElement(ElementName = "Event")]
-        public List<Event> Events { get; set; } = new List<Event>();
+        public HashSet<Event> Events { get; set; } = new HashSet<Event>();
     }
 }

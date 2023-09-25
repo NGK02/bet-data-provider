@@ -21,15 +21,6 @@ namespace BetDataProvider.Business.Services
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        //protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        //{
-        //    using (var scope = _serviceScopeFactory.CreateScope())
-        //    {
-        //        IXmlHandler xmlHandler = scope.ServiceProvider.GetRequiredService<IXmlHandler>();
-        //        _timer = new(async _ => await xmlHandler.SaveSportData(), null, TimeSpan.Zero, _feedPullDelay);
-        //    }
-        //}
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -37,7 +28,8 @@ namespace BetDataProvider.Business.Services
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var xmlHandler = scope.ServiceProvider.GetRequiredService<IXmlHandler>();
-                    await xmlHandler.SaveSportData();
+                    var sportData = await xmlHandler.GetAndParseXmlDataAsync();
+                    xmlHandler.SaveSportData(sportData);
                 }
                 await Task.Delay(_feedPullDelay, stoppingToken);
             }

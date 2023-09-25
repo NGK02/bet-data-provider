@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Xml.Serialization;
 
 namespace BetDataProvider.DataAccess.Models
 {
+    [Index(nameof(XmlId), IsUnique = true)]
     public abstract class Entity
     {
         [Key]
@@ -26,5 +28,19 @@ namespace BetDataProvider.DataAccess.Models
         public bool IsDeleted { get; set; }
 
         public DateTime? DeletedOn { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            Entity other = (Entity)obj;
+            return XmlId == other.XmlId;
+        }
+
+        public override int GetHashCode()
+        {
+            return XmlId.GetHashCode();
+        }
     }
 }

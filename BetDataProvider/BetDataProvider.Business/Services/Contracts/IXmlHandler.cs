@@ -9,6 +9,11 @@ namespace BetDataProvider.Business.Services.Contracts
 {
     public interface IXmlHandler
     {
-        public Task SaveSportData();
+        Task<Sport> GetAndParseXmlDataAsync();
+
+        // remove
+        //Sport GetAndParseXmlDataAsync();
+
+        public bool SaveSportData(Sport sportData);
     }
 }
