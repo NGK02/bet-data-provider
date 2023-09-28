@@ -1,4 +1,5 @@
 ﻿using BetDataProvider.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,13 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 {
     public interface ISportRepository
     {
-        bool SaveSportData(Sport sportData);
+        Match GetMatchByXmlId(int xmlId);
+
+        Bet GetBetByXmlId(int xmlId);
+
+        Odd GetOddByXmlId(int xmlId);
+
+        bool AddSportData(Sport sportData);
 
         Sport GetActiveSportData();
 

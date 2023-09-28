@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 namespace BetDataProvider.DataAccess.Models
 {
     [XmlRoot(ElementName = "Event")]
-    public class Event : Entity, IActivatable
+    public class Event : Entity
     {
         [XmlAttribute(AttributeName = "IsLive")]
         public bool IsLive { get; set; }
@@ -23,6 +23,6 @@ namespace BetDataProvider.DataAccess.Models
         public int SportId { get; set; }
         public Sport Sport { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        //public bool IsActive { get; set; } = true;
     }
 }

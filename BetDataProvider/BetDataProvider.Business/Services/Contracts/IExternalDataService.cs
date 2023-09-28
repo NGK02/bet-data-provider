@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BetDataProvider.Business.Services.Contracts
 {
-    public interface IXmlHandler
+    public interface IExternalDataService
     {
         Task<Sport> GetAndParseXmlDataAsync();
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetDataProvider.DataAccess.Migrations
 {
     [DbContext(typeof(BetDataDbContext))]
-    [Migration("20230925120307_Init")]
+    [Migration("20230928140240_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -84,9 +84,6 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
