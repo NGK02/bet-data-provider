@@ -11,6 +11,10 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
     {
         Match GetMatchByXmlId(int xmlId);
 
-        List<Match> GetMatches(int? hoursAhead, bool? isActiveData);
+        Bet GetBetByXmlId(int xmlId);
+
+        Odd GetOddByXmlId(int xmlId);
+
+        List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead/*, bool? isActiveData*/);
     }
 }

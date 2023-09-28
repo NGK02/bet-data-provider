@@ -10,21 +10,15 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 {
     public interface ISportRepository
     {
-        Match GetMatchByXmlId(int xmlId);
-
-        Bet GetBetByXmlId(int xmlId);
-
-        Odd GetOddByXmlId(int xmlId);
-
         bool AddSportData(Sport sportData);
 
         Sport GetActiveSportData();
 
-        Sport GetSportData();
+        Sport GetAllSportData();
 
         bool UpdateSportData(Sport sportData);
 
-        bool UpdateEventData(ICollection<Event> events);
+        //bool UpdateEventData(ICollection<Event> events);
 
         bool SaveChanges();
     }

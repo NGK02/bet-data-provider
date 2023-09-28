@@ -19,24 +19,6 @@ namespace BetDataProvider.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public Match GetMatchByXmlId(int xmlId) 
-        {
-            var matchingMatch = _dbContext.Matches.AsNoTracking().Include(m => m.Bets).ThenInclude(b => b.Odds).FirstOrDefault(m => m.XmlId == xmlId);
-            return matchingMatch;
-        }
-
-        public Bet GetBetByXmlId(int xmlId)
-        {
-            var matchingBet = _dbContext.Bets.AsNoTracking().Include(b => b.Odds).FirstOrDefault(b => b.XmlId == xmlId);
-            return matchingBet;
-        }
-
-        public Odd GetOddByXmlId(int xmlId)
-        {
-            var matchingOdd = _dbContext.Odds.AsNoTracking().FirstOrDefault(o => o.XmlId == xmlId);
-            return matchingOdd;
-        }
-
         public Sport GetActiveSportData()
         {
             var sportData = _dbContext.Sports.AsNoTracking()
@@ -49,7 +31,7 @@ namespace BetDataProvider.DataAccess.Repositories
             return sportData;
         }
 
-        public Sport GetSportData()
+        public Sport GetAllSportData()
         {
             var sportData = _dbContext.Sports.AsNoTracking()
                 .Include(s => s.Events)
@@ -74,11 +56,11 @@ namespace BetDataProvider.DataAccess.Repositories
             return true;
         }
 
-        public bool UpdateEventData(ICollection<Event> events)
-        {
-            _dbContext.Events.UpdateRange(events);
-            return true;
-        }
+        //public bool UpdateEventData(ICollection<Event> events)
+        //{
+        //    _dbContext.Events.UpdateRange(events);
+        //    return true;
+        //}
 
         public bool SaveChanges()
         {

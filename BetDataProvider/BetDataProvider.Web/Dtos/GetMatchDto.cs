@@ -10,8 +10,8 @@ namespace BetDataProvider.Web.Dtos
 
         public string MatchType { get; set; }
 
-        public HashSet<GetBetDto> Bets { get; set; } = new HashSet<GetBetDto>();
-
         public bool IsActive { get; set; }
+
+        public HashSet<GetBetDto> Bets { get; set; } = new HashSet<GetBetDto>();
     }
 }

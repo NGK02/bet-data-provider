@@ -6,8 +6,8 @@
 
         public bool IsLive { get; set; }
 
-        public HashSet<GetOddDto> Odds { get; set; } = new HashSet<GetOddDto>();
-
         public bool IsActive { get; set; }
+
+        public HashSet<GetOddDto> Odds { get; set; } = new HashSet<GetOddDto>();
     }
 }

@@ -2,6 +2,7 @@
 using BetDataProvider.Business.Services.Contracts;
 using BetDataProvider.Web.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BetDataProvider.Web.Controllers
 {
@@ -21,16 +22,31 @@ namespace BetDataProvider.Web.Controllers
         [HttpGet("{xmlId}")]
         public IActionResult GetMatchByXmlId(int xmlId) 
         {
-            var matchDto = _mapper.Map<GetMatchDto>(_matchService.GetMatchByXmlId(xmlId));
+            var match = _matchService.GetMatchByXmlId(xmlId);
+
+            if (match is null)
+            {
+                return NotFound(match);
+            }
+
+            var matchDto = _mapper.Map<GetMatchDto>(match);
+
             return Ok(matchDto);
         }
 
         [HttpGet("")]
-        public IActionResult GetUpcomingMatches([FromQuery] string hoursAhead)
+        public IActionResult GetUpcomingMatchesWithPreviewBets([FromQuery] double? hoursAhead/*, bool? dataIsActive*/)
         {
-            //var matchDto = _mapper.Map<GetMatchDto>(_matchService.GetUpcomingMatches(hoursAhead));
-            //return Ok(matchDto);
-            throw new NotImplementedException();
+            var matches = _matchService.GetUpcomingMatchesWithPreviewBets(hoursAhead);
+
+            if (matches.IsNullOrEmpty())
+            {
+                return NotFound(matches);
+            }
+
+            var matchDto = matches.Select(m => _mapper.Map<GetMatchDto>(m));
+
+            return Ok(matchDto);
         }
     }
 }

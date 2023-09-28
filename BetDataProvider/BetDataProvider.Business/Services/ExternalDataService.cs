@@ -25,11 +25,14 @@ namespace BetDataProvider.Business.Services
         private const string _xmlFeedUrl = "https://sports.ultraplay.net/sportsxml?clientKey=9C5E796D-4D54-42FD-A535-D7E77906541A&sportId=2357&days=7";
 
         private readonly ISportRepository _sportRepository;
+        private readonly IMatchRepository _matchRepository;
         private readonly HttpClient _httpClient;
 
-        public ExternalDataService(ISportRepository sportRepository, HttpClient httpClient)
+        public ExternalDataService(ISportRepository sportRepository, IMatchRepository matchRepository, HttpClient httpClient)
         {
             this._sportRepository = sportRepository;
+            this._matchRepository = matchRepository;
+
             this._httpClient = httpClient;
         }
 
@@ -128,7 +131,7 @@ namespace BetDataProvider.Business.Services
 
             foreach (var newMatch in newMatches)
             {
-                var updatedMatch = oldMatches.FirstOrDefault(e => e.XmlId == newMatch.XmlId) ?? _sportRepository.GetMatchByXmlId(newMatch.XmlId);
+                var updatedMatch = oldMatches.FirstOrDefault(e => e.XmlId == newMatch.XmlId) ?? _matchRepository.GetMatchByXmlId(newMatch.XmlId);
 
                 if (updatedMatch is not null)
                 {
@@ -249,7 +252,7 @@ namespace BetDataProvider.Business.Services
 
             foreach (var newBet in newBets)
             {
-                var updatedBet = oldBets.FirstOrDefault(e => e.XmlId == newBet.XmlId) ?? _sportRepository.GetBetByXmlId(newBet.XmlId);
+                var updatedBet = oldBets.FirstOrDefault(e => e.XmlId == newBet.XmlId) ?? _matchRepository.GetBetByXmlId(newBet.XmlId);
 
                 if (updatedBet is not null)
                 {
@@ -323,7 +326,7 @@ namespace BetDataProvider.Business.Services
 
             foreach (var newOdd in newOdds)
             {
-                var updatedOdd = oldOdds.FirstOrDefault(e => e.XmlId == newOdd.XmlId) ?? _sportRepository.GetOddByXmlId(newOdd.XmlId);
+                var updatedOdd = oldOdds.FirstOrDefault(e => e.XmlId == newOdd.XmlId) ?? _matchRepository.GetOddByXmlId(newOdd.XmlId);
 
                 if (updatedOdd is not null)
                 {
