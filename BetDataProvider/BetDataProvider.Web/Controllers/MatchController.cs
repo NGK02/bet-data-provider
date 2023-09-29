@@ -34,7 +34,7 @@ namespace BetDataProvider.Web.Controllers
             return Ok(matchDto);
         }
 
-        [HttpGet("upcoming")]
+        [HttpGet("in24Hours")]
         public IActionResult GetUpcomingMatchesWithPreviewBets()
         {
             var matches = _matchService.GetUpcomingMatchesWithPreviewBets();
