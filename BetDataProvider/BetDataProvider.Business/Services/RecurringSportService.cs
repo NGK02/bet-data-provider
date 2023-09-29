@@ -35,9 +35,12 @@ namespace BetDataProvider.Business.Services
 
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    var xmlHandler = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
-                    var sportData = await xmlHandler.GetAndParseXmlDataAsync();
-                    xmlHandler.SaveSportData(sportData);
+                    var xmlGetterService = scope.ServiceProvider.GetRequiredService<IXmlGetterService>();
+                    var externalDataService = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
+
+                    var sportData = await xmlGetterService.GetAndParseXmlDataAsync();
+
+                    externalDataService.SaveSportData(sportData);
                 }
 
                 watch.Stop();

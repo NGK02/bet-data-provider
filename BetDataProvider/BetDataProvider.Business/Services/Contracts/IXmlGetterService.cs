@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BetDataProvider.Business.Services.Contracts
 {
-    public interface IExternalDataService
+    public interface IXmlGetterService
     {
-        public bool SaveSportData(Sport sportData);
+        Task<Sport> GetAndParseXmlDataAsync();
     }
 }

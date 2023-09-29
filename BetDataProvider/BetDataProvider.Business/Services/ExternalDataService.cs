@@ -23,50 +23,21 @@ namespace BetDataProvider.Business.Services
 {
     public class ExternalDataService : IExternalDataService
     {
-        private const string _xmlFeedUrl = "https://sports.ultraplay.net/sportsxml?clientKey=9C5E796D-4D54-42FD-A535-D7E77906541A&sportId=2357&days=7";
-
         private readonly ISportRepository _sportRepository;
         private readonly IMatchRepository _matchRepository;
-        private readonly HttpClient _httpClient;
 
         public ExternalDataService(ISportRepository sportRepository, IMatchRepository matchRepository, HttpClient httpClient)
         {
             this._sportRepository = sportRepository;
             this._matchRepository = matchRepository;
-
-            this._httpClient = httpClient;
-        }
-
-        // exceptions?
-        public async Task<Sport> GetAndParseXmlDataAsync()
-        {
-            var uri = new Uri(_xmlFeedUrl);
-
-            var response = await _httpClient.GetAsync(uri);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var resultStream = await response.Content.ReadAsByteArrayAsync();
-
-                var serializer = new XmlSerializer(typeof(XmlSports));
-                using (TextReader reader = new StreamReader(new MemoryStream(resultStream), Encoding.UTF8))
-                {
-                    var parsedXml = (XmlSports)serializer.Deserialize(reader);
-                    return parsedXml.Sport;
-                }
-            }
-
-            return null;
         }
 
         public bool SaveSportData(Sport newSportData)
         {
-            // maybe first check if ANY sport data instead of active, not sure if needed
             var oldSportData = _sportRepository.GetActiveSportData();
 
             if (newSportData is not null)
             {
-                // not sure what to do if Sport exists but no Events
                 if (oldSportData is null)
                 {
                     _sportRepository.AddSportData(newSportData);
@@ -81,7 +52,7 @@ namespace BetDataProvider.Business.Services
             return true;
         }
 
-        public bool UpdateSportData(Sport oldSportData, Sport newSportData)
+        private bool UpdateSportData(Sport oldSportData, Sport newSportData)
         {
             var oldEvents = oldSportData.Events;
             var newEvents = newSportData.Events;
@@ -99,23 +70,26 @@ namespace BetDataProvider.Business.Services
         {
             HashSet<Event> updatedEvents = new HashSet<Event>();
 
-            foreach (Event newEvent in newEvents)
+            foreach (var newEvent in newEvents)
             {
-                var updatedEvent = oldEvents.FirstOrDefault(e => e.XmlId == newEvent.XmlId);
+                var updatedEvent = oldEvents.FirstOrDefault(e => e.XmlId == newEvent.XmlId) ?? _sportRepository.GetEventByXmlId(newEvent.XmlId);
 
-                if (updatedEvent is null)
+                if (updatedEvent is not null)
                 {
-                    updatedEvents.Add(newEvent);
-                }
-                else
-                {
+                    updatedEvent.IsActive = newEvent.IsActive;
                     updatedEvent.Matches = MergeAndUpdateMatches(updatedEvent.Matches, newEvent.Matches);
 
                     oldEvents.Remove(updatedEvent);
-
-                    updatedEvents.Add(updatedEvent);
                 }
+                else
+                {
+                    updatedEvent = newEvent;
+                }
+
+                updatedEvents.Add(updatedEvent);
             }
+
+            updatedEvents.UnionWith(SetInactiveEvents(oldEvents));
 
             return updatedEvents;
         }
@@ -132,13 +106,11 @@ namespace BetDataProvider.Business.Services
                 {
                     UpdateMatchProperties(updatedMatch, newMatch);
 
-                    // maybe a check first to see if updated match was assigned from oldMatches for safety?
                     oldMatches.Remove(updatedMatch);
                 }
                 else
                 {
                     updatedMatch = newMatch;
-                    //_sportRepository.AddMatchChangeMessage(newMatch, MessageType.Create);
                 }
 
                 updatedMatches.Add(updatedMatch);
@@ -273,6 +245,16 @@ namespace BetDataProvider.Business.Services
             }
         }
 
+        private HashSet<Event> SetInactiveEvents(HashSet<Event> inactiveEvents)
+        {
+            foreach (var inactiveEvent in inactiveEvents)
+            {
+                inactiveEvent.IsActive = false;
+                inactiveEvent.Matches = SetInactiveMatches(inactiveEvent.Matches);
+            }
+            return inactiveEvents;
+        }
+
         private HashSet<Match> SetInactiveMatches(HashSet<Match> inactiveMatches)
         {
             foreach (var inactiveMatch in inactiveMatches)
@@ -307,23 +289,5 @@ namespace BetDataProvider.Business.Services
             }
             return inactiveOdds;
         }
-
-        // test method with seeded data for testing edge cases
-        //public async Task<Sport> GetAndParseXmlDataAsync()
-        //{
-        //    string[] strings = new string[4] { "<Sport Name=\"eSports\" ID=\"2357\"><Event Name=\"NBA2K, NBA Battle\" ID=\"83063\" IsLive=\"false\" CategoryID=\"9357\"><Match Name=\"L.A. Lakers (dema21) - Boston Celtics (yaro)\" ID=\"3118821\" StartDate=\"2023-09-25T07:20:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850075\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210324\" Value=\"2.29\"/><Odd Name=\"2\" ID=\"336210323\" Value=\"1.57\"/></Bet><Bet Name=\"Spread\" ID=\"48850074\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210864\" Value=\"1.83\" SpecialBetValue=\"2.5\"/><Odd Name=\"2\" ID=\"336210863\" Value=\"1.90\" SpecialBetValue=\"2.5\"/><Odd Name=\"1\" ID=\"336210606\" Value=\"2.02\" SpecialBetValue=\"-1.5\"/><Odd Name=\"2\" ID=\"336210605\" Value=\"1.73\" SpecialBetValue=\"-1.5\"/></Bet><Bet Name=\"Total\" ID=\"48850076\" IsLive=\"true\"><Odd Name=\"Over\" ID=\"336210792\" Value=\"2.02\" SpecialBetValue=\"128.5\"/><Odd Name=\"Under\" ID=\"336210793\" Value=\"1.73\" SpecialBetValue=\"128.5\"/><Odd Name=\"Over\" ID=\"336210810\" Value=\"1.93\" SpecialBetValue=\"129.5\"/><Odd Name=\"Under\" ID=\"336210811\" Value=\"1.79\" SpecialBetValue=\"129.5\"/><Odd Name=\"Over\" ID=\"336210816\" Value=\"1.83\" SpecialBetValue=\"127.5\"/><Odd Name=\"Under\" ID=\"336210817\" Value=\"1.90\" SpecialBetValue=\"127.5\"/><Odd Name=\"Over\" ID=\"336210818\" Value=\"2.02\" SpecialBetValue=\"130.5\"/><Odd Name=\"Under\" ID=\"336210819\" Value=\"1.73\" SpecialBetValue=\"130.5\"/></Bet></Match><Match Name=\"Dallas Mavericks (Lalkoff) - Minnesota Timberwolves (resarke)\" ID=\"3118819\" StartDate=\"2023-09-25T07:23:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850094\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210425\" Value=\"1.90\"/><Odd Name=\"2\" ID=\"336210426\" Value=\"1.83\"/></Bet><Bet Name=\"Spread\" ID=\"48850095\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210853\" Value=\"1.86\" SpecialBetValue=\"2.5\"/><Odd Name=\"2\" ID=\"336210856\" Value=\"1.86\" SpecialBetValue=\"2.5\"/><Odd Name=\"1\" ID=\"336210795\" Value=\"1.79\" SpecialBetValue=\"1.5\"/><Odd Name=\"2\" ID=\"336210794\" Value=\"1.93\" SpecialBetValue=\"1.5\"/><Odd Name=\"1\" ID=\"336210423\" Value=\"2.06\" SpecialBetValue=\"-1.5\"/><Odd Name=\"2\" ID=\"336210424\" Value=\"1.70\" SpecialBetValue=\"-1.5\"/></Bet><Bet Name=\"Total\" ID=\"48850093\" IsLive=\"true\"><Odd Name=\"Over\" ID=\"336210563\" Value=\"1.90\" SpecialBetValue=\"133.5\"/><Odd Name=\"Under\" ID=\"336210564\" Value=\"1.83\" SpecialBetValue=\"133.5\"/><Odd Name=\"Over\" ID=\"336210815\" Value=\"1.93\" SpecialBetValue=\"137.5\"/><Odd Name=\"Under\" ID=\"336210813\" Value=\"1.79\" SpecialBetValue=\"137.5\"/><Odd Name=\"Over\" ID=\"336210783\" Value=\"2.02\" SpecialBetValue=\"135.5\"/><Odd Name=\"Under\" ID=\"336210782\" Value=\"1.73\" SpecialBetValue=\"135.5\"/><Odd Name=\"Over\" ID=\"336210855\" Value=\"1.86\" SpecialBetValue=\"139.5\"/><Odd Name=\"Under\" ID=\"336210854\" Value=\"1.86\" SpecialBetValue=\"139.5\"/><Odd Name=\"Over\" ID=\"336210857\" Value=\"1.86\" SpecialBetValue=\"136.5\"/><Odd Name=\"Under\" ID=\"336210858\" Value=\"1.86\" SpecialBetValue=\"136.5\"/></Bet></Match></Event></Sport>",
-        //        "<Sport Name=\"eSports\" ID=\"2357\"><Event Name=\"NBA2K, NBA Battle\" ID=\"83063\" IsLive=\"false\" CategoryID=\"9357\"><Match Name=\"L.A. Lakers (dema21) - Boston Celtics (yaro)\" ID=\"3118821\" StartDate=\"2023-09-25T07:20:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850075\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210324\" Value=\"1.52\"/><Odd Name=\"2\" ID=\"336210323\" Value=\"2.40\"/></Bet><Bet Name=\"Spread\" ID=\"48850074\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336211027\" Value=\"2.02\" SpecialBetValue=\"-5.5\"/><Odd Name=\"2\" ID=\"336211026\" Value=\"1.73\" SpecialBetValue=\"-5.5\"/><Odd Name=\"1\" ID=\"336210431\" Value=\"1.97\" SpecialBetValue=\"-2.5\"/><Odd Name=\"2\" ID=\"336210432\" Value=\"1.76\" SpecialBetValue=\"-2.5\"/><Odd Name=\"1\" ID=\"336210574\" Value=\"1.79\" SpecialBetValue=\"-3.5\"/><Odd Name=\"2\" ID=\"336210573\" Value=\"1.93\" SpecialBetValue=\"-3.5\"/></Bet></Match></Event></Sport>",
-        //        "<Sport Name=\"eSports\" ID=\"2357\"><Event Name=\"NBA2K, NBA Battle\" ID=\"83063\" IsLive=\"false\" CategoryID=\"9357\"><Match Name=\"L.A. Lakers (dema21) - Boston Celtics (yaro)\" ID=\"3118821\" StartDate=\"2023-09-25T07:20:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850075\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210324\" Value=\"1.52\"/><Odd Name=\"2\" ID=\"336210323\" Value=\"2.40\"/></Bet><Bet Name=\"Spread\" ID=\"48850074\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336211027\" Value=\"2.02\" SpecialBetValue=\"-5.5\"/><Odd Name=\"2\" ID=\"336211026\" Value=\"1.73\" SpecialBetValue=\"-5.5\"/><Odd Name=\"1\" ID=\"336210431\" Value=\"1.97\" SpecialBetValue=\"-2.5\"/><Odd Name=\"2\" ID=\"336210432\" Value=\"1.76\" SpecialBetValue=\"-2.5\"/><Odd Name=\"1\" ID=\"336210574\" Value=\"1.79\" SpecialBetValue=\"-3.5\"/><Odd Name=\"2\" ID=\"336210573\" Value=\"1.93\" SpecialBetValue=\"-3.5\"/></Bet><Bet Name=\"Total\" ID=\"48850076\" IsLive=\"true\"><Odd Name=\"Over\" ID=\"336210792\" Value=\"2.02\" SpecialBetValue=\"128.5\"/><Odd Name=\"Under\" ID=\"336210793\" Value=\"1.73\" SpecialBetValue=\"128.5\"/><Odd Name=\"Over\" ID=\"336210810\" Value=\"1.93\" SpecialBetValue=\"129.5\"/><Odd Name=\"Under\" ID=\"336210811\" Value=\"1.79\" SpecialBetValue=\"129.5\"/><Odd Name=\"Over\" ID=\"336210816\" Value=\"1.83\" SpecialBetValue=\"127.5\"/><Odd Name=\"Under\" ID=\"336210817\" Value=\"1.90\" SpecialBetValue=\"127.5\"/><Odd Name=\"Over\" ID=\"336210818\" Value=\"2.02\" SpecialBetValue=\"130.5\"/><Odd Name=\"Under\" ID=\"336210819\" Value=\"1.73\" SpecialBetValue=\"130.5\"/></Bet></Match></Event></Sport>",
-        //        "<Sport Name=\"eSports\" ID=\"2357\"><Event Name=\"NBA2K, NBA Battle\" ID=\"83063\" IsLive=\"false\" CategoryID=\"9357\"><Match Name=\"L.A. Lakers (dema21) - Boston Celtics (yaro)\" ID=\"3118821\" StartDate=\"2023-09-25T07:20:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850075\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210324\" Value=\"1.52\"/><Odd Name=\"2\" ID=\"336210323\" Value=\"2.40\"/></Bet><Bet Name=\"Spread\" ID=\"48850074\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336211027\" Value=\"2.02\" SpecialBetValue=\"-5.5\"/><Odd Name=\"2\" ID=\"336211026\" Value=\"1.73\" SpecialBetValue=\"-5.5\"/><Odd Name=\"1\" ID=\"336210431\" Value=\"1.97\" SpecialBetValue=\"-2.5\"/><Odd Name=\"2\" ID=\"336210432\" Value=\"1.76\" SpecialBetValue=\"-2.5\"/><Odd Name=\"1\" ID=\"336210574\" Value=\"1.79\" SpecialBetValue=\"-3.5\"/><Odd Name=\"2\" ID=\"336210573\" Value=\"1.93\" SpecialBetValue=\"-3.5\"/></Bet><Bet Name=\"Total\" ID=\"48850076\" IsLive=\"true\"><Odd Name=\"Over\" ID=\"336210792\" Value=\"2.02\" SpecialBetValue=\"128.5\"/><Odd Name=\"Under\" ID=\"336210793\" Value=\"1.73\" SpecialBetValue=\"128.5\"/><Odd Name=\"Over\" ID=\"336210810\" Value=\"1.93\" SpecialBetValue=\"129.5\"/><Odd Name=\"Under\" ID=\"336210811\" Value=\"1.79\" SpecialBetValue=\"129.5\"/><Odd Name=\"Over\" ID=\"336210816\" Value=\"1.83\" SpecialBetValue=\"127.5\"/><Odd Name=\"Under\" ID=\"336210817\" Value=\"1.90\" SpecialBetValue=\"127.5\"/><Odd Name=\"Over\" ID=\"336210818\" Value=\"2.02\" SpecialBetValue=\"130.5\"/><Odd Name=\"Under\" ID=\"336210819\" Value=\"1.73\" SpecialBetValue=\"130.5\"/></Bet></Match><Match Name=\"Dallas Mavericks (Lalkoff) - Minnesota Timberwolves (resarke)\" ID=\"3118819\" StartDate=\"2023-09-25T07:23:00\" MatchType=\"Live\"><Bet Name=\"Money Line\" ID=\"48850094\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210425\" Value=\"1.90\"/><Odd Name=\"2\" ID=\"336210426\" Value=\"1.83\"/></Bet><Bet Name=\"Spread\" ID=\"48850095\" IsLive=\"true\"><Odd Name=\"1\" ID=\"336210853\" Value=\"1.86\" SpecialBetValue=\"2.5\"/><Odd Name=\"2\" ID=\"336210856\" Value=\"1.86\" SpecialBetValue=\"2.5\"/><Odd Name=\"1\" ID=\"336210795\" Value=\"1.79\" SpecialBetValue=\"1.5\"/><Odd Name=\"2\" ID=\"336210794\" Value=\"1.93\" SpecialBetValue=\"1.5\"/><Odd Name=\"1\" ID=\"336210423\" Value=\"2.06\" SpecialBetValue=\"-1.5\"/><Odd Name=\"2\" ID=\"336210424\" Value=\"1.70\" SpecialBetValue=\"-1.5\"/></Bet><Bet Name=\"Total\" ID=\"48850093\" IsLive=\"true\"><Odd Name=\"Over\" ID=\"336210563\" Value=\"1.90\" SpecialBetValue=\"133.5\"/><Odd Name=\"Under\" ID=\"336210564\" Value=\"1.83\" SpecialBetValue=\"133.5\"/><Odd Name=\"Over\" ID=\"336210815\" Value=\"1.93\" SpecialBetValue=\"137.5\"/><Odd Name=\"Under\" ID=\"336210813\" Value=\"1.79\" SpecialBetValue=\"137.5\"/><Odd Name=\"Over\" ID=\"336210783\" Value=\"2.02\" SpecialBetValue=\"135.5\"/><Odd Name=\"Under\" ID=\"336210782\" Value=\"1.73\" SpecialBetValue=\"135.5\"/><Odd Name=\"Over\" ID=\"336210855\" Value=\"1.86\" SpecialBetValue=\"139.5\"/><Odd Name=\"Under\" ID=\"336210854\" Value=\"1.86\" SpecialBetValue=\"139.5\"/><Odd Name=\"Over\" ID=\"336210857\" Value=\"1.86\" SpecialBetValue=\"136.5\"/><Odd Name=\"Under\" ID=\"336210858\" Value=\"1.86\" SpecialBetValue=\"136.5\"/><Odd Name=\"Over\" ID=\"336210868\" Value=\"10\" SpecialBetValue=\"500\"/><Odd Name=\"Under\" ID=\"336210869\" Value=\"10\" SpecialBetValue=\"500\"/></Bet></Match></Event></Sport>"};
-
-        //    var resultStream = Encoding.UTF8.GetBytes(strings[3]); ;
-
-        //    var serializer = new XmlSerializer(typeof(Sport));
-        //    using (TextReader reader = new StreamReader(new MemoryStream(resultStream), Encoding.UTF8))
-        //    {
-        //        var parsedXml = (Sport)serializer.Deserialize(reader);
-        //        return parsedXml;
-        //    }
-        //}
     }
 }

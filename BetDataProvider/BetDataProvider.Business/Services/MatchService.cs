@@ -23,9 +23,9 @@ namespace BetDataProvider.Business.Services
             return _matchRepository.GetMatchByXmlId(xmlId);
         }
 
-        public List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead)
+        public List<Match> GetUpcomingMatchesWithPreviewBets()
         {
-           return _matchRepository.GetUpcomingMatchesWithPreviewBets(hoursAhead);
+           return _matchRepository.GetUpcomingMatchesWithPreviewBets();
         }
     }
 }

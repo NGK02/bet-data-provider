@@ -23,7 +23,7 @@ namespace BetDataProvider.DataAccess.Models
 
         public MessageType MessageType { get; set; }
 
-        public DateTime CreatedOn => DateTime.UtcNow;
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         public bool IsDeleted { get; set; }
 

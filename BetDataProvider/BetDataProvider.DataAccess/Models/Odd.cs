@@ -12,7 +12,6 @@ namespace BetDataProvider.DataAccess.Models
     [XmlRoot(ElementName = "Odd")]
     public class Odd : Entity, IActivatable
     {
-        //[Required]
         [XmlAttribute(AttributeName = "Value")]
         public string Value { get; set; }
 

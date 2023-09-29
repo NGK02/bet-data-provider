@@ -15,6 +15,6 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 
         Odd GetOddByXmlId(int xmlId);
 
-        List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead/*, bool? isActiveData*/);
+        List<Match> GetUpcomingMatchesWithPreviewBets();
     }
 }

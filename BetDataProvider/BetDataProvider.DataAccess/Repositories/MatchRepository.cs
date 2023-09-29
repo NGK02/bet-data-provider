@@ -27,7 +27,7 @@ namespace BetDataProvider.DataAccess.Repositories
 
         public Match GetMatchByXmlId(int xmlId)
         {
-            var matchingMatch = _dbContext.Matches
+            var matchingMatch = GetAllMatchData()
                 .AsNoTracking()
                 .Include(m => m.Bets)
                 .ThenInclude(b => b.Odds)
@@ -53,9 +53,10 @@ namespace BetDataProvider.DataAccess.Repositories
             return matchingOdd;
         }
 
-        public List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead)
+        public List<Match> GetUpcomingMatchesWithPreviewBets()
         {
-            var matches = GetAllMatchData().Where(m => m.IsActive);
+            DateTime futureDate = DateTime.Now.AddHours(24);
+            var matches = GetAllMatchData().Where(m => m.IsActive && m.StartDate.Date >= DateTime.Now && m.StartDate.Date <= futureDate);
 
             foreach (var match in matches)
             {
@@ -70,20 +71,7 @@ namespace BetDataProvider.DataAccess.Repositories
                 }
             }
 
-            matches = FilterBy(hoursAhead, matches);
-
             return matches.ToList();
-        }
-
-        private IQueryable<Match> FilterBy(double? hoursAhead, IQueryable<Match> matches)
-        {
-            if (hoursAhead is not null)
-            {
-                DateTime futureDate = DateTime.Now.AddDays(hoursAhead.Value);
-                matches = matches.Where(m => m.StartDate.Date >= DateTime.Now && m.StartDate.Date <= futureDate);
-            }
-
-            return matches;
         }
     }
 }

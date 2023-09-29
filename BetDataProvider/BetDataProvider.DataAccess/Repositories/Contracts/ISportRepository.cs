@@ -17,6 +17,8 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 
         Sport GetAllSportData();
 
+        Event GetEventByXmlId(int xmlId);
+
         bool UpdateSportData(Sport sportData);
 
         void AddMatchChangeMessage(int matchId, MessageType type);

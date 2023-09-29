@@ -24,10 +24,10 @@ namespace BetDataProvider.DataAccess.Repositories
         {
             var sportData = _dbContext.Sports
                 .AsNoTracking()
-                .Include(s => s.Events)
+                .Include(s => s.Events.Where(e => e.IsActive))
                 .ThenInclude(e => e.Matches.Where(m => m.IsActive))
-                .ThenInclude(m => m.Bets.Where(m => m.IsActive))
-                .ThenInclude(b => b.Odds.Where(m => m.IsActive))
+                .ThenInclude(m => m.Bets.Where(b => b.IsActive))
+                .ThenInclude(b => b.Odds.Where(o => o.IsActive))
                 .SingleOrDefault();
 
             return sportData;
@@ -44,6 +44,18 @@ namespace BetDataProvider.DataAccess.Repositories
                 .SingleOrDefault();
 
             return sportData;
+        }
+
+        public Event GetEventByXmlId(int xmlId)
+        {
+            var @event = _dbContext.Events
+                .AsNoTracking()
+                .Include(e => e.Matches)
+                .ThenInclude(m => m.Bets)
+                .ThenInclude(b => b.Odds)
+                .FirstOrDefault(e => e.XmlId == xmlId);
+
+            return @event;
         }
 
         public bool AddSportData(Sport sportData)

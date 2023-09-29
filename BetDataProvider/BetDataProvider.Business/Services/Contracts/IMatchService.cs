@@ -11,6 +11,6 @@ namespace BetDataProvider.Business.Services.Contracts
     {
         Match GetMatchByXmlId(int xmlId);
 
-        List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead/*, bool? isActiveData*/);
+        List<Match> GetUpcomingMatchesWithPreviewBets();
     }
 }

@@ -22,7 +22,7 @@ namespace BetDataProvider.DataAccess.Models
         [XmlAttribute(AttributeName = "Name")]
         public string Name { get; set; }
 
-        public DateTime CreatedOn => DateTime.UtcNow;
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
         public bool IsDeleted { get; set; }
 
@@ -63,7 +63,6 @@ namespace BetDataProvider.DataAccess.Models
         {
             return !(entity1 == entity2);
         }
-
 
         public override int GetHashCode()
         {

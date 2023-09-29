@@ -34,10 +34,10 @@ namespace BetDataProvider.Web.Controllers
             return Ok(matchDto);
         }
 
-        [HttpGet("")]
-        public IActionResult GetUpcomingMatchesWithPreviewBets([FromQuery] double? hoursAhead)
+        [HttpGet("upcoming")]
+        public IActionResult GetUpcomingMatchesWithPreviewBets()
         {
-            var matches = _matchService.GetUpcomingMatchesWithPreviewBets(hoursAhead);
+            var matches = _matchService.GetUpcomingMatchesWithPreviewBets();
 
             if (matches.IsNullOrEmpty())
             {
