@@ -7,3 +7,9 @@ This application requests bet data from an XML feed every 60 seconds. The XML da
 - Microsoft SQL Server
 - AutoMapper
 - Swagger
+
+## Setup
+- Clone repository.
+- Run ``update-database`` command in Package Manager Console.
+- Optional: Configure connection string in ``appsettings.json``
+- Run the app.
