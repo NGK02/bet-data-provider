@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetDataProvider.DataAccess.Migrations
 {
     [DbContext(typeof(BetDataDbContext))]
-    [Migration("20230928140240_Init")]
+    [Migration("20230929085347_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,9 +32,6 @@ namespace BetDataProvider.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
@@ -68,6 +65,34 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.ToTable("Bets");
                 });
 
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.BetChangeMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BetId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BetId");
+
+                    b.ToTable("BetChangeMessages");
+                });
+
             modelBuilder.Entity("BetDataProvider.DataAccess.Models.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -78,9 +103,6 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
@@ -119,9 +141,6 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
@@ -134,8 +153,9 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MatchType")
-                        .HasColumnType("int");
+                    b.Property<string>("MatchType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -157,6 +177,34 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.ToTable("Matches");
                 });
 
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.MatchChangeMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.ToTable("MatchChangeMessages");
+                });
+
             modelBuilder.Entity("BetDataProvider.DataAccess.Models.Odd", b =>
                 {
                     b.Property<int>("Id")
@@ -167,9 +215,6 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     b.Property<int>("BetId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
@@ -204,7 +249,7 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.ToTable("Odds");
                 });
 
-            modelBuilder.Entity("BetDataProvider.DataAccess.Models.Sport", b =>
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.OddChangeMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -212,8 +257,33 @@ namespace BetDataProvider.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OddId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OddId");
+
+                    b.ToTable("OddChangeMessages");
+                });
+
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.Sport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
@@ -247,6 +317,17 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.Navigation("Match");
                 });
 
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.BetChangeMessage", b =>
+                {
+                    b.HasOne("BetDataProvider.DataAccess.Models.Bet", "Bet")
+                        .WithMany()
+                        .HasForeignKey("BetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bet");
+                });
+
             modelBuilder.Entity("BetDataProvider.DataAccess.Models.Event", b =>
                 {
                     b.HasOne("BetDataProvider.DataAccess.Models.Sport", "Sport")
@@ -269,6 +350,17 @@ namespace BetDataProvider.DataAccess.Migrations
                     b.Navigation("Event");
                 });
 
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.MatchChangeMessage", b =>
+                {
+                    b.HasOne("BetDataProvider.DataAccess.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+                });
+
             modelBuilder.Entity("BetDataProvider.DataAccess.Models.Odd", b =>
                 {
                     b.HasOne("BetDataProvider.DataAccess.Models.Bet", "Bet")
@@ -278,6 +370,17 @@ namespace BetDataProvider.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Bet");
+                });
+
+            modelBuilder.Entity("BetDataProvider.DataAccess.Models.OddChangeMessage", b =>
+                {
+                    b.HasOne("BetDataProvider.DataAccess.Models.Odd", "Odd")
+                        .WithMany()
+                        .HasForeignKey("OddId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Odd");
                 });
 
             modelBuilder.Entity("BetDataProvider.DataAccess.Models.Bet", b =>

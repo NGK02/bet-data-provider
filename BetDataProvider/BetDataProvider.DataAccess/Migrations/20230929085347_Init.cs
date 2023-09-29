@@ -19,7 +19,6 @@ namespace BetDataProvider.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -39,7 +38,6 @@ namespace BetDataProvider.DataAccess.Migrations
                     SportId = table.Column<int>(type: "int", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -61,12 +59,11 @@ namespace BetDataProvider.DataAccess.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MatchType = table.Column<int>(type: "int", nullable: false),
+                    MatchType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -92,7 +89,6 @@ namespace BetDataProvider.DataAccess.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -103,6 +99,50 @@ namespace BetDataProvider.DataAccess.Migrations
                         name: "FK_Bets_Matches_MatchId",
                         column: x => x.MatchId,
                         principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MatchChangeMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MatchId = table.Column<int>(type: "int", nullable: false),
+                    MessageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MatchChangeMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MatchChangeMessages_Matches_MatchId",
+                        column: x => x.MatchId,
+                        principalTable: "Matches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BetChangeMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BetId = table.Column<int>(type: "int", nullable: false),
+                    MessageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BetChangeMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BetChangeMessages_Bets_BetId",
+                        column: x => x.BetId,
+                        principalTable: "Bets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -119,7 +159,6 @@ namespace BetDataProvider.DataAccess.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     XmlId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -133,6 +172,33 @@ namespace BetDataProvider.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "OddChangeMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OddId = table.Column<int>(type: "int", nullable: false),
+                    MessageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OddChangeMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OddChangeMessages_Odds_OddId",
+                        column: x => x.OddId,
+                        principalTable: "Odds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BetChangeMessages_BetId",
+                table: "BetChangeMessages",
+                column: "BetId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bets_MatchId",
@@ -157,6 +223,11 @@ namespace BetDataProvider.DataAccess.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_MatchChangeMessages_MatchId",
+                table: "MatchChangeMessages",
+                column: "MatchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Matches_EventId",
                 table: "Matches",
                 column: "EventId");
@@ -166,6 +237,11 @@ namespace BetDataProvider.DataAccess.Migrations
                 table: "Matches",
                 column: "XmlId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OddChangeMessages_OddId",
+                table: "OddChangeMessages",
+                column: "OddId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Odds_BetId",
@@ -188,6 +264,15 @@ namespace BetDataProvider.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BetChangeMessages");
+
+            migrationBuilder.DropTable(
+                name: "MatchChangeMessages");
+
+            migrationBuilder.DropTable(
+                name: "OddChangeMessages");
+
             migrationBuilder.DropTable(
                 name: "Odds");
 

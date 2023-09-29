@@ -11,9 +11,6 @@ namespace BetDataProvider.Business.Services.Contracts
     {
         Task<Sport> GetAndParseXmlDataAsync();
 
-        // remove
-        //Sport GetAndParseXmlDataAsync();
-
         public bool SaveSportData(Sport sportData);
     }
 }

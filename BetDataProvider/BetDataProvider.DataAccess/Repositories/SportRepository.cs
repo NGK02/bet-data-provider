@@ -1,4 +1,5 @@
 ﻿using BetDataProvider.DataAccess.Models;
+using BetDataProvider.DataAccess.Models.Enums;
 using BetDataProvider.DataAccess.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,7 +22,8 @@ namespace BetDataProvider.DataAccess.Repositories
 
         public Sport GetActiveSportData()
         {
-            var sportData = _dbContext.Sports.AsNoTracking()
+            var sportData = _dbContext.Sports
+                .AsNoTracking()
                 .Include(s => s.Events)
                 .ThenInclude(e => e.Matches.Where(m => m.IsActive))
                 .ThenInclude(m => m.Bets.Where(m => m.IsActive))
@@ -33,7 +35,8 @@ namespace BetDataProvider.DataAccess.Repositories
 
         public Sport GetAllSportData()
         {
-            var sportData = _dbContext.Sports.AsNoTracking()
+            var sportData = _dbContext.Sports
+                .AsNoTracking()
                 .Include(s => s.Events)
                 .ThenInclude(e => e.Matches)
                 .ThenInclude(m => m.Bets)
@@ -43,7 +46,6 @@ namespace BetDataProvider.DataAccess.Repositories
             return sportData;
         }
 
-        // generic?
         public bool AddSportData(Sport sportData)
         {
             _dbContext.Sports.Add(sportData);
@@ -56,11 +58,35 @@ namespace BetDataProvider.DataAccess.Repositories
             return true;
         }
 
-        //public bool UpdateEventData(ICollection<Event> events)
-        //{
-        //    _dbContext.Events.UpdateRange(events);
-        //    return true;
-        //}
+        public void AddMatchChangeMessage(int matchId, MessageType type)
+        {
+            var message = new MatchChangeMessage(matchId, type)
+            {
+                MatchId = matchId,
+                MessageType = type
+            };
+            _dbContext.MatchChangeMessages.Add(message);
+        }
+
+        public void AddBetChangeMessage(int betId, MessageType type)
+        {
+            var message = new BetChangeMessage(betId, type)
+            {
+                BetId = betId,
+                MessageType = type
+            };
+            _dbContext.BetChangeMessages.Add(message);
+        }
+
+        public void AddOddChangeMessage(int oddId, MessageType type)
+        {
+            var message = new OddChangeMessage(oddId, type)
+            {
+                OddId = oddId,
+                MessageType = type
+            };
+            _dbContext.OddChangeMessages.Add(message);
+        }
 
         public bool SaveChanges()
         {

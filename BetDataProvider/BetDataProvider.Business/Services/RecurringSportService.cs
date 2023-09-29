@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BetDataProvider.Business.Services
 {
-    public class RecurringSportService : BackgroundService, IRecurringSportService
+    public class RecurringSportService : BackgroundService
     {
         private readonly TimeSpan _feedPullDelay = TimeSpan.FromSeconds(60);
 

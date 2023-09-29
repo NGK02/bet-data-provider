@@ -1,4 +1,5 @@
 ﻿using BetDataProvider.DataAccess.Models;
+using BetDataProvider.DataAccess.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,11 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 
         bool UpdateSportData(Sport sportData);
 
-        //bool UpdateEventData(ICollection<Event> events);
+        void AddMatchChangeMessage(int matchId, MessageType type);
+
+        void AddBetChangeMessage(int betId, MessageType type);
+
+        void AddOddChangeMessage(int oddId, MessageType type);
 
         bool SaveChanges();
     }

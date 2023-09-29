@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BetDataProvider.Business.Services.Contracts
+namespace BetDataProvider.DataAccess.Models.Enums
 {
-    public interface IRecurringSportService
+    public enum MessageType
     {
+        Update = 1,
+        Delete = 2
     }
 }

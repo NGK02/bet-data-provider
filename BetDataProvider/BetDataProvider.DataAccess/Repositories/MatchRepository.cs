@@ -27,7 +27,8 @@ namespace BetDataProvider.DataAccess.Repositories
 
         public Match GetMatchByXmlId(int xmlId)
         {
-            var matchingMatch = _dbContext.Matches.AsNoTracking()
+            var matchingMatch = _dbContext.Matches
+                .AsNoTracking()
                 .Include(m => m.Bets)
                 .ThenInclude(b => b.Odds)
                 .FirstOrDefault(m => m.XmlId == xmlId);
@@ -37,17 +38,22 @@ namespace BetDataProvider.DataAccess.Repositories
 
         public Bet GetBetByXmlId(int xmlId)
         {
-            var matchingBet = _dbContext.Bets.AsNoTracking().Include(b => b.Odds).FirstOrDefault(b => b.XmlId == xmlId);
+            var matchingBet = _dbContext.Bets
+                .AsNoTracking()
+                .Include(b => b.Odds)
+                .FirstOrDefault(b => b.XmlId == xmlId);
+
             return matchingBet;
         }
 
         public Odd GetOddByXmlId(int xmlId)
         {
             var matchingOdd = _dbContext.Odds.AsNoTracking().FirstOrDefault(o => o.XmlId == xmlId);
+
             return matchingOdd;
         }
 
-        public List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead/*, bool? isActiveData*/)
+        public List<Match> GetUpcomingMatchesWithPreviewBets(double? hoursAhead)
         {
             var matches = GetAllMatchData().Where(m => m.IsActive);
 
@@ -64,24 +70,18 @@ namespace BetDataProvider.DataAccess.Repositories
                 }
             }
 
-            matches = FilterBy(hoursAhead/*, isActiveData*/, matches);
+            matches = FilterBy(hoursAhead, matches);
 
             return matches.ToList();
         }
 
-        private IQueryable<Match> FilterBy(double? hoursAhead, /*bool? isActiveData,*/ IQueryable<Match> matches)
+        private IQueryable<Match> FilterBy(double? hoursAhead, IQueryable<Match> matches)
         {
             if (hoursAhead is not null)
             {
                 DateTime futureDate = DateTime.Now.AddDays(hoursAhead.Value);
                 matches = matches.Where(m => m.StartDate.Date >= DateTime.Now && m.StartDate.Date <= futureDate);
             }
-            //if (isActiveData ?? true)
-            //{
-            //    matches = matches.Where(m => m.IsActive && m.Bets
-            //                       .All(b => b.IsActive && b.Odds
-            //                       .All(o => o.IsActive)));
-            //}
 
             return matches;
         }

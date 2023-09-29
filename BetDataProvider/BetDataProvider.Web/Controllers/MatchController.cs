@@ -35,7 +35,7 @@ namespace BetDataProvider.Web.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult GetUpcomingMatchesWithPreviewBets([FromQuery] double? hoursAhead/*, bool? dataIsActive*/)
+        public IActionResult GetUpcomingMatchesWithPreviewBets([FromQuery] double? hoursAhead)
         {
             var matches = _matchService.GetUpcomingMatchesWithPreviewBets(hoursAhead);
 
