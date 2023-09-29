@@ -9,7 +9,6 @@ namespace BetDataProvider.Web.AutoMapperProfiles
         public AutoMapperProfile() 
         {
             CreateMap<Match, GetMatchDto>();
-            CreateMap<Match, GetUpcomingMatchDto>();
 
             CreateMap<Bet, GetBetDto>();
 
