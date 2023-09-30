@@ -26,7 +26,7 @@ namespace BetDataProvider.Business.Services
         private readonly ISportRepository _sportRepository;
         private readonly IMatchRepository _matchRepository;
 
-        public ExternalDataService(ISportRepository sportRepository, IMatchRepository matchRepository, HttpClient httpClient)
+        public ExternalDataService(ISportRepository sportRepository, IMatchRepository matchRepository)
         {
             this._sportRepository = sportRepository;
             this._matchRepository = matchRepository;
