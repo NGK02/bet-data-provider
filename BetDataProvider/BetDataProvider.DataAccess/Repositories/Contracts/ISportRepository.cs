@@ -11,22 +11,22 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 {
     public interface ISportRepository
     {
-        bool AddSportData(Sport sportData);
+        Task AddSportDataAsync(Sport sportData);
 
-        Sport GetActiveSportData();
+        Task<Sport> GetActiveSportDataAsync();
 
-        Sport GetAllSportData();
+        Task<Sport> GetAllSportDataAsync();
 
-        Event GetEventByXmlId(int xmlId);
+        Task<Event> GetEventByXmlIdAsync(int xmlId);
 
-        bool UpdateSportData(Sport sportData);
+        void UpdateSportData(Sport sportData);
 
-        void AddMatchChangeMessage(int matchId, MessageType type);
+        Task AddMatchChangeMessageAsync(int matchId, MessageType type);
 
-        void AddBetChangeMessage(int betId, MessageType type);
+        Task AddBetChangeMessageAsync(int betId, MessageType type);
 
-        void AddOddChangeMessage(int oddId, MessageType type);
+        Task AddOddChangeMessageAsync(int oddId, MessageType type);
 
-        bool SaveChanges();
+        Task SaveChangesAsync();
     }
 }

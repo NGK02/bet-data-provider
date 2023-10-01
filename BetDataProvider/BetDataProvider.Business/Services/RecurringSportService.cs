@@ -40,7 +40,7 @@ namespace BetDataProvider.Business.Services
 
                     var sportData = await xmlGetterService.GetAndParseXmlDataAsync();
 
-                    externalDataService.SaveSportData(sportData);
+                    await externalDataService.SaveSportDataAsync(sportData);
                 }
 
                 watch.Stop();

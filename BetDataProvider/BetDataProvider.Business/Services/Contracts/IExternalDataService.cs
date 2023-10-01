@@ -9,6 +9,6 @@ namespace BetDataProvider.Business.Services.Contracts
 {
     public interface IExternalDataService
     {
-        public bool SaveSportData(Sport sportData);
+        public Task SaveSportDataAsync(Sport newSportData);
     }
 }

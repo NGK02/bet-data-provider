@@ -20,9 +20,9 @@ namespace BetDataProvider.Web.Controllers
         }
 
         [HttpGet("{xmlId}")]
-        public IActionResult GetMatchByXmlId(int xmlId) 
+        public async Task<IActionResult> GetMatchByXmlIdAsync(int xmlId) 
         {
-            var match = _matchService.GetMatchByXmlId(xmlId);
+            var match = await _matchService.GetMatchByXmlIdAsync(xmlId);
 
             if (match is null)
             {
@@ -35,9 +35,9 @@ namespace BetDataProvider.Web.Controllers
         }
 
         [HttpGet("in24Hours")]
-        public IActionResult GetUpcomingMatchesWithPreviewBets()
+        public async Task<IActionResult> GetUpcomingMatchesWithPreviewBets()
         {
-            var matches = _matchService.GetUpcomingMatchesWithPreviewBets();
+            var matches = await _matchService.GetUpcomingMatchesWithPreviewBetsAsync();
 
             if (matches.IsNullOrEmpty())
             {

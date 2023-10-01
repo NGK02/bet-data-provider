@@ -20,90 +20,87 @@ namespace BetDataProvider.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public Sport GetActiveSportData()
+        public async Task<Sport> GetActiveSportDataAsync()
         {
-            var sportData = _dbContext.Sports
+            var sportData = await _dbContext.Sports
                 .AsNoTracking()
                 .Include(s => s.Events.Where(e => e.IsActive))
                 .ThenInclude(e => e.Matches.Where(m => m.IsActive))
                 .ThenInclude(m => m.Bets.Where(b => b.IsActive))
                 .ThenInclude(b => b.Odds.Where(o => o.IsActive))
-                .SingleOrDefault();
+                .SingleOrDefaultAsync();
 
             return sportData;
         }
 
-        public Sport GetAllSportData()
+        public async Task<Sport> GetAllSportDataAsync()
         {
-            var sportData = _dbContext.Sports
+            var sportData = await _dbContext.Sports
                 .AsNoTracking()
                 .Include(s => s.Events)
                 .ThenInclude(e => e.Matches)
                 .ThenInclude(m => m.Bets)
                 .ThenInclude(b => b.Odds)
-                .SingleOrDefault();
+                .SingleOrDefaultAsync();
 
             return sportData;
         }
 
-        public Event GetEventByXmlId(int xmlId)
+        public async Task<Event> GetEventByXmlIdAsync(int xmlId)
         {
-            var @event = _dbContext.Events
+            var @event = await _dbContext.Events
                 .AsNoTracking()
                 .Include(e => e.Matches)
                 .ThenInclude(m => m.Bets)
                 .ThenInclude(b => b.Odds)
-                .FirstOrDefault(e => e.XmlId == xmlId);
+                .FirstOrDefaultAsync(e => e.XmlId == xmlId);
 
             return @event;
         }
 
-        public bool AddSportData(Sport sportData)
+        public async Task AddSportDataAsync(Sport sportData)
         {
-            _dbContext.Sports.Add(sportData);
-            return true;
+            await _dbContext.Sports.AddAsync(sportData);
         }
 
-        public bool UpdateSportData(Sport sportData)
+        public void UpdateSportData(Sport sportData)
         {
             _dbContext.Update(sportData);
-            return true;
         }
 
-        public void AddMatchChangeMessage(int matchId, MessageType type)
+        public async Task AddMatchChangeMessageAsync(int matchId, MessageType type)
         {
             var message = new MatchChangeMessage(matchId, type)
             {
                 MatchId = matchId,
                 MessageType = type
             };
-            _dbContext.MatchChangeMessages.Add(message);
+            await _dbContext.MatchChangeMessages.AddAsync(message);
         }
 
-        public void AddBetChangeMessage(int betId, MessageType type)
+        public async Task AddBetChangeMessageAsync(int betId, MessageType type)
         {
             var message = new BetChangeMessage(betId, type)
             {
                 BetId = betId,
                 MessageType = type
             };
-            _dbContext.BetChangeMessages.Add(message);
+            await _dbContext.BetChangeMessages.AddAsync(message);
         }
 
-        public void AddOddChangeMessage(int oddId, MessageType type)
+        public async Task AddOddChangeMessageAsync(int oddId, MessageType type)
         {
             var message = new OddChangeMessage(oddId, type)
             {
                 OddId = oddId,
                 MessageType = type
             };
-            _dbContext.OddChangeMessages.Add(message);
+            await _dbContext.OddChangeMessages.AddAsync(message);
         }
 
-        public bool SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _dbContext.SaveChanges();
-            return true;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

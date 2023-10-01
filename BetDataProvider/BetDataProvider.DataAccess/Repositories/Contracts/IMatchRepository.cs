@@ -9,12 +9,12 @@ namespace BetDataProvider.DataAccess.Repositories.Contracts
 {
     public interface IMatchRepository
     {
-        Match GetMatchByXmlId(int xmlId);
+        Task<Match> GetMatchByXmlIdAsync(int xmlId);
 
-        Bet GetBetByXmlId(int xmlId);
+        Task<Bet> GetBetByXmlIdAsync(int xmlId);
 
-        Odd GetOddByXmlId(int xmlId);
+        Task<Odd> GetOddByXmlIdAsync(int xmlId);
 
-        List<Match> GetUpcomingMatchesWithPreviewBets();
+        Task<List<Match>> GetUpcomingMatchesWithPreviewBetsAsync();
     }
 }

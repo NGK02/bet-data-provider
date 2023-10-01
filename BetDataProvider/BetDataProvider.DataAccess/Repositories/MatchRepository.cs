@@ -25,38 +25,38 @@ namespace BetDataProvider.DataAccess.Repositories
             return _dbContext.Matches.Include(m => m.Bets).ThenInclude(m => m.Odds);
         }
 
-        public Match GetMatchByXmlId(int xmlId)
+        public async Task<Match> GetMatchByXmlIdAsync(int xmlId)
         {
-            var matchingMatch = GetAllMatchData()
+            var matchingMatch = await GetAllMatchData()
                 .AsNoTracking()
                 .Include(m => m.Bets)
                 .ThenInclude(b => b.Odds)
-                .FirstOrDefault(m => m.XmlId == xmlId);
+                .FirstOrDefaultAsync(m => m.XmlId == xmlId);
 
             return matchingMatch;
         }
 
-        public Bet GetBetByXmlId(int xmlId)
+        public async Task<Bet> GetBetByXmlIdAsync(int xmlId)
         {
-            var matchingBet = _dbContext.Bets
+            var matchingBet = await _dbContext.Bets
                 .AsNoTracking()
                 .Include(b => b.Odds)
-                .FirstOrDefault(b => b.XmlId == xmlId);
+                .FirstOrDefaultAsync(b => b.XmlId == xmlId);
 
             return matchingBet;
         }
 
-        public Odd GetOddByXmlId(int xmlId)
+        public async Task<Odd> GetOddByXmlIdAsync(int xmlId)
         {
-            var matchingOdd = _dbContext.Odds.AsNoTracking().FirstOrDefault(o => o.XmlId == xmlId);
+            var matchingOdd = await _dbContext.Odds.AsNoTracking().FirstOrDefaultAsync(o => o.XmlId == xmlId);
 
             return matchingOdd;
         }
 
-        public List<Match> GetUpcomingMatchesWithPreviewBets()
+        public async Task<List<Match>> GetUpcomingMatchesWithPreviewBetsAsync()
         {
             DateTime futureDate = DateTime.Now.AddHours(24);
-            var matches = GetAllMatchData().Where(m => m.IsActive && m.StartDate.Date >= DateTime.Now && m.StartDate.Date <= futureDate);
+            var matches = await GetAllMatchData().Where(m => m.IsActive && m.StartDate.Date >= DateTime.Now && m.StartDate.Date <= futureDate).ToListAsync();
 
             foreach (var match in matches)
             {
@@ -71,7 +71,7 @@ namespace BetDataProvider.DataAccess.Repositories
                 }
             }
 
-            return matches.ToList();
+            return matches;
         }
     }
 }

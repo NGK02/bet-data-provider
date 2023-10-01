@@ -9,8 +9,8 @@ namespace BetDataProvider.Business.Services.Contracts
 {
     public interface IMatchService
     {
-        Match GetMatchByXmlId(int xmlId);
+        Task<Match> GetMatchByXmlIdAsync(int xmlId);
 
-        List<Match> GetUpcomingMatchesWithPreviewBets();
+        Task<List<Match>> GetUpcomingMatchesWithPreviewBetsAsync();
     }
 }

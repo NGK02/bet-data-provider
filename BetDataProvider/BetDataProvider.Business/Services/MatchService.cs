@@ -18,14 +18,14 @@ namespace BetDataProvider.Business.Services
             this._matchRepository = matchRepository;
         }
 
-        public Match GetMatchByXmlId(int xmlId) 
+        public async Task<Match> GetMatchByXmlIdAsync(int xmlId) 
         {
-            return _matchRepository.GetMatchByXmlId(xmlId);
+            return await _matchRepository.GetMatchByXmlIdAsync(xmlId);
         }
 
-        public List<Match> GetUpcomingMatchesWithPreviewBets()
+        public async Task<List<Match>> GetUpcomingMatchesWithPreviewBetsAsync()
         {
-           return _matchRepository.GetUpcomingMatchesWithPreviewBets();
+           return await _matchRepository.GetUpcomingMatchesWithPreviewBetsAsync();
         }
     }
 }
