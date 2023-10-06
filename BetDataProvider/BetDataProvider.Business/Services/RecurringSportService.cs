@@ -31,24 +31,32 @@ namespace BetDataProvider.Business.Services
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var watch = Stopwatch.StartNew();
-
-                using (var scope = _serviceScopeFactory.CreateScope())
+                try
                 {
-                    var xmlGetterService = scope.ServiceProvider.GetRequiredService<IXmlGetterService>();
-                    var externalDataService = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
+                    var watch = Stopwatch.StartNew();
 
-                    var sportData = await xmlGetterService.GetAndParseXmlDataAsync();
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var xmlHandler = scope.ServiceProvider.GetRequiredService<IXmlHandler>();
+                        var externalDataService = scope.ServiceProvider.GetRequiredService<IExternalDataService>();
 
-                    await externalDataService.SaveSportDataAsync(sportData);
+                        var xmlAsByteArray = await xmlHandler.GetXmlDataAsync();
+                        var newSportData = xmlHandler.ParseXmlData(xmlAsByteArray);
+
+                        await externalDataService.SaveSportDataAsync(newSportData);
+                    }
+
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                    counter += 1;
+                    _logger.LogInformation($"Cycle {counter} completed in {elapsedMs}ms");
+
+                    await Task.Delay(_feedPullDelay, stoppingToken);
                 }
-
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-                counter += 1;
-                _logger.LogInformation($"Cycle {counter} completed in {elapsedMs}ms");
-
-                await Task.Delay(_feedPullDelay, stoppingToken);
+                catch (Exception e)
+                {
+                    _logger.LogInformation($"Background service has been stopped due to unexpected error - {e.Message}");
+                }
             }
         }
     }

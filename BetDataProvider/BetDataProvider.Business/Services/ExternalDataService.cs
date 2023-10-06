@@ -32,7 +32,7 @@ namespace BetDataProvider.Business.Services
             this._matchRepository = matchRepository;
         }
 
-        public async Task SaveSportDataAsync(Sport newSportData)
+        public async Task SaveSportDataAsync(Sport? newSportData)
         {
             var oldSportData = await _sportRepository.GetActiveSportDataAsync();
 
@@ -44,38 +44,41 @@ namespace BetDataProvider.Business.Services
                 }
                 else
                 {
-                    await UpdateSportData(oldSportData, newSportData);
+                    await UpdateSportDataAsync(oldSportData, newSportData);
                 }
                 await _sportRepository.SaveChangesAsync();
             }
         }
 
-        private async Task UpdateSportData(Sport oldSportData, Sport newSportData)
+        private async Task UpdateSportDataAsync(Sport oldActiveSportData, Sport newSportData)
         {
-            var oldEvents = oldSportData.Events;
+            var oldActiveEvents = oldActiveSportData.Events;
             var newEvents = newSportData.Events;
 
-            var updatedEvents = await MergeAndUpdateEvents(oldEvents, newEvents);
+            var updatedEvents = await MergeAndUpdateEventsAsync(oldActiveEvents, newEvents);
 
-            oldSportData.Events = updatedEvents;
+            oldActiveSportData.Events = updatedEvents;
 
-            _sportRepository.UpdateSportData(oldSportData);
+            _sportRepository.UpdateSportData(oldActiveSportData);
         }
 
-        private async Task<HashSet<Event>> MergeAndUpdateEvents(HashSet<Event> oldEvents, HashSet<Event> newEvents)
+        private async Task<HashSet<Event>> MergeAndUpdateEventsAsync(HashSet<Event> oldActiveEvents, HashSet<Event> newEvents)
         {
             HashSet<Event> updatedEvents = new HashSet<Event>();
 
             foreach (var newEvent in newEvents)
             {
-                var updatedEvent = oldEvents.FirstOrDefault(e => e.XmlId == newEvent.XmlId) ?? await _sportRepository.GetEventByXmlIdAsync(newEvent.XmlId);
+                //var updatedEvent = oldActiveEvents.FirstOrDefault(e => e.XmlId == newEvent.XmlId) ?? await _sportRepository.GetEventByXmlIdAsync(newEvent.XmlId);
+
+                oldActiveEvents.TryGetValue(newEvent, out var updatedEvent);
+                updatedEvent ??= await _sportRepository.GetEventByXmlIdAsync(newEvent.XmlId);
 
                 if (updatedEvent is not null)
                 {
                     updatedEvent.IsActive = newEvent.IsActive;
                     updatedEvent.Matches = await MergeAndUpdateMatchesAsync(updatedEvent.Matches, newEvent.Matches);
 
-                    oldEvents.Remove(updatedEvent);
+                    oldActiveEvents.Remove(updatedEvent);
                 }
                 else
                 {
@@ -85,24 +88,27 @@ namespace BetDataProvider.Business.Services
                 updatedEvents.Add(updatedEvent);
             }
 
-            updatedEvents.UnionWith(await SetInactiveEvents(oldEvents));
+            updatedEvents.UnionWith(await SetInactiveEvents(oldActiveEvents));
 
             return updatedEvents;
         }
 
-        private async Task<HashSet<Match>> MergeAndUpdateMatchesAsync(HashSet<Match> oldMatches, HashSet<Match> newMatches)
+        private async Task<HashSet<Match>> MergeAndUpdateMatchesAsync(HashSet<Match> oldActiveMatches, HashSet<Match> newMatches)
         {
             HashSet<Match> updatedMatches = new HashSet<Match>();
 
             foreach (var newMatch in newMatches)
             {
-                var updatedMatch = oldMatches.FirstOrDefault(e => e.XmlId == newMatch.XmlId) ?? await _matchRepository.GetMatchByXmlIdAsync(newMatch.XmlId);
+                //var updatedMatch = oldActiveMatches.FirstOrDefault(e => e.XmlId == newMatch.XmlId) ?? await _matchRepository.GetMatchByXmlIdAsync(newMatch.XmlId);
+
+                oldActiveMatches.TryGetValue(newMatch, out var updatedMatch);
+                updatedMatch ??= await _matchRepository.GetMatchByXmlIdAsync(newMatch.XmlId);
 
                 if (updatedMatch is not null)
                 {
                     await UpdateMatchPropertiesAsync(updatedMatch, newMatch);
 
-                    oldMatches.Remove(updatedMatch);
+                    oldActiveMatches.Remove(updatedMatch);
                 }
                 else
                 {
@@ -112,7 +118,7 @@ namespace BetDataProvider.Business.Services
                 updatedMatches.Add(updatedMatch);
             }
 
-            updatedMatches.UnionWith(await SetInactiveMatchesAsync(oldMatches));
+            updatedMatches.UnionWith(await SetInactiveMatchesAsync(oldActiveMatches));
 
             return updatedMatches;
         }
@@ -144,19 +150,22 @@ namespace BetDataProvider.Business.Services
             }
         }
 
-        private async Task<HashSet<Bet>> MergeAndUpdateBetsAsync(HashSet<Bet> oldBets, HashSet<Bet> newBets)
+        private async Task<HashSet<Bet>> MergeAndUpdateBetsAsync(HashSet<Bet> oldActiveBets, HashSet<Bet> newBets)
         {
             HashSet<Bet> updatedBets = new HashSet<Bet>();
 
             foreach (var newBet in newBets)
             {
-                var updatedBet = oldBets.FirstOrDefault(e => e.XmlId == newBet.XmlId) ?? await _matchRepository.GetBetByXmlIdAsync(newBet.XmlId);
+                //var updatedBet = oldActiveBets.FirstOrDefault(e => e.XmlId == newBet.XmlId) ?? await _matchRepository.GetBetByXmlIdAsync(newBet.XmlId);
+
+                oldActiveBets.TryGetValue(newBet, out var updatedBet);
+                updatedBet ??= await _matchRepository.GetBetByXmlIdAsync(newBet.XmlId);
 
                 if (updatedBet is not null)
                 {
                     await UpdateBetPropertiesAsync(updatedBet, newBet);
 
-                    oldBets.Remove(updatedBet);
+                    oldActiveBets.Remove(updatedBet);
                 }
                 else
                 {
@@ -166,7 +175,7 @@ namespace BetDataProvider.Business.Services
                 updatedBets.Add(updatedBet);
             }
 
-            updatedBets.UnionWith(await SetInactiveBetsAsync(oldBets));
+            updatedBets.UnionWith(await SetInactiveBetsAsync(oldActiveBets));
 
             return updatedBets;
         }
@@ -188,19 +197,22 @@ namespace BetDataProvider.Business.Services
             }
         }
 
-        private async Task<HashSet<Odd>> MergeAndUpdateOddsAsync(HashSet<Odd> oldOdds, HashSet<Odd> newOdds)
+        private async Task<HashSet<Odd>> MergeAndUpdateOddsAsync(HashSet<Odd> oldActiveOdds, HashSet<Odd> newOdds)
         {
             HashSet<Odd> updatedOdds = new HashSet<Odd>();
 
             foreach (var newOdd in newOdds)
             {
-                var updatedOdd = oldOdds.FirstOrDefault(e => e.XmlId == newOdd.XmlId) ?? await _matchRepository.GetOddByXmlIdAsync(newOdd.XmlId);
+                //var updatedOdd = oldActiveOdds.FirstOrDefault(e => e.XmlId == newOdd.XmlId) ?? await _matchRepository.GetOddByXmlIdAsync(newOdd.XmlId);
+
+                oldActiveOdds.TryGetValue(newOdd, out var updatedOdd);
+                updatedOdd ??= await _matchRepository.GetOddByXmlIdAsync(newOdd.XmlId);
 
                 if (updatedOdd is not null)
                 {
                     await UpdateOddPropertiesAsync(updatedOdd, newOdd);
 
-                    oldOdds.Remove(updatedOdd);
+                    oldActiveOdds.Remove(updatedOdd);
                 }
                 else
                 {
@@ -210,7 +222,7 @@ namespace BetDataProvider.Business.Services
                 updatedOdds.Add(updatedOdd);
             }
 
-            updatedOdds.UnionWith(await SetInactiveOddsAsync(oldOdds));
+            updatedOdds.UnionWith(await SetInactiveOddsAsync(oldActiveOdds));
 
             return updatedOdds;
         }
